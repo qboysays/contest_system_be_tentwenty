@@ -1,0 +1,6 @@
+applib/applib-1.0.0.tgz
+applib/node_modules/
+src/node_modules/
+src/.env
+applib/package-lock.json
+src/package-lock.json
