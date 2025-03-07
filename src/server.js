@@ -27,6 +27,12 @@ startServerProcess(logger);
 const middleware = require("./middleware/authenticator");
 app.use(middleware.AuthenticateRequest);
 
+const authRoute = require("./routes/authRoutes");
+app.use("/api/auth", authRoute);
+
+const contestRoute = require("./routes/contestRoutes");
+app.use("/api/contest", contestRoute);
+
 // Fetch Primary Setings From Database Residing in applib
 
 async function startServerProcess(logger) {

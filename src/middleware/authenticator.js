@@ -63,7 +63,7 @@ exports.AuthenticateRequest = async function (req, res, next) {
       functionContext,
       validateRequest
     );
-    apiContext.userType = validateRequestResult.UserType;
+    apiContext.userRole = validateRequestResult.UserRole;
     apiContext.userRef = validateRequestResult.UserRef;
     apiContext.userID = validateRequestResult.UserID;
 
