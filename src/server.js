@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const appLib = require("applib");
 const cors = require("cors");
 const logger = new appLib.Logger(null, null);
+const rateLimit = require('express-rate-limit');
 
 app.use(cors());
 app.use(function (req, res, next) {
@@ -18,9 +19,14 @@ app.use(function (req, res, next) {
   next();
 });
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ type: "application/json" }));
-
+app.use(limiter);
 
 startServerProcess(logger);
 
@@ -32,6 +38,9 @@ app.use("/api/auth", authRoute);
 
 const contestRoute = require("./routes/contestRoutes");
 app.use("/api/contest", contestRoute);
+
+const userRoute = require("./routes/userRoutes");
+app.use("/api/user", userRoute);
 
 // Fetch Primary Setings From Database Residing in applib
 

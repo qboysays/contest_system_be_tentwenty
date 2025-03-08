@@ -67,3 +67,33 @@ module.exports.getContestRequest = (requestParams) => {
 
     return joiSchema.validate(requestParams);
 };
+
+
+module.exports.joinContestRequest = (requestParams) => {
+    const joiSchema = joi.object({
+        contestRef: joi.string().required(),
+    });
+    return joiSchema.validate(requestParams);
+};
+
+module.exports.submitContestRequest = (requestParams) => {
+    const answerSchema = joi.object({
+        questionId: joi.number().integer().positive().required(),
+        optionId: joi.number().integer().positive().required()
+    });
+
+    const joiSchema = joi.object({
+        contestRef: joi.string().required(),
+        answers: joi.array().items(answerSchema).min(1).required(),
+        finalSubmission: joi.boolean().optional().default(false)
+    });
+    return joiSchema.validate(requestParams);
+};
+
+module.exports.getLeaderboardRequest = (requestParams) => {
+    const joiSchema = joi.object({
+        contestRef: joi.string().required()
+    });
+
+    return joiSchema.validate(requestParams);
+};

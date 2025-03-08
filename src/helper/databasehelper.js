@@ -2,9 +2,14 @@ const databaseModule = require("../database/database");
 const coreRequestModel = require("../model/coreserviceModel");
 const constant = require("../common/constant");
 
-
+/**
+ * This function validates the api uri and authentication token
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 module.exports.validateRequest = async (functionContext, resolvedResult) => {
-    var logger = functionContext.logger;
+    const logger = functionContext.logger;
     logger.logInfo("validateRequest() Invoked!");
   
     try {
@@ -17,9 +22,9 @@ module.exports.validateRequest = async (functionContext, resolvedResult) => {
       logger.logInfo(
         `validateRequest() :: Error :: ${JSON.stringify(errValidateRequest)}`
       );
-      var errorCode = null;
-      var errorMessage = null;
-      var errorDescription = null;
+      let errorCode = null;
+      let errorMessage = null;
+      let errorDescription = null;
   
       if (
         errValidateRequest.sqlState &&
@@ -33,12 +38,6 @@ module.exports.validateRequest = async (functionContext, resolvedResult) => {
       ) {
         errorCode = constant.ErrorCode.Invalid_User_Credentials;
         errorMessage = constant.ErrorMessage.Invalid_User_Credentials;
-      } else if (
-        errValidateRequest.sqlState &&
-        errValidateRequest.sqlState == constant.ErrorCode.Access_Not_Granted
-      ) {
-        errorCode = constant.ErrorCode.Access_Not_Granted;
-        errorMessage = constant.ErrorMessage.Access_Not_Granted;
       } else {
         errorCode = constant.ErrorCode.ApplicationError;
         errorMessage = constant.ErrorMessage.ApplicationError;
@@ -53,8 +52,14 @@ module.exports.validateRequest = async (functionContext, resolvedResult) => {
     }
   };
 
+/**
+ * database call to register and save the user new user
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 module.exports.registerAndSaveUserDB = async (functionContext, resolvedResult) => {
-    var logger = functionContext.logger;
+    const logger = functionContext.logger;
     logger.logInfo("saveUserDB() Invoked!");
     try {
       let rows = await databaseModule.knex.raw(
@@ -73,34 +78,20 @@ module.exports.registerAndSaveUserDB = async (functionContext, resolvedResult) =
       logger.logInfo(
         `registerAndSaveUserDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`
       );
-      var result = rows[0][0][0] ? rows[0][0][0] : null;
+      let result = rows[0][0][0] ? rows[0][0][0] : null;
       return result;
     } catch (errsaveUserDB) {
       logger.logInfo(
         `registerAndSaveUserDB() :: Error :: ${JSON.stringify(errsaveUserDB)}`
       );
-      var errorCode = null;
-      var errorMessage = null;
+      let errorCode = null;
+      let errorMessage = null;
       if (
         errsaveUserDB.sqlState &&
         errsaveUserDB.sqlState == constant.ErrorCode.Invalid_User
       ) {
         errorCode = constant.ErrorCode.Invalid_User;
         errorMessage = constant.ErrorMessage.Invalid_User;
-      } else if (
-        errsaveUserDB.sqlState &&
-        errsaveUserDB.sqlState ==
-        constant.ErrorCode.UserName_Unavailable
-      ) {
-        errorCode = constant.ErrorCode.UserName_Unavailable;
-        errorMessage = constant.ErrorMessage.UserName_Unavailable;
-      } else if (
-        errsaveUserDB.sqlState &&
-        errsaveUserDB.sqlState ==
-        constant.ErrorCode.Invalid_User_Name_Or_Password
-      ) {
-        errorCode = constant.ErrorCode.Invalid_User_Name_Or_Password;
-        errorMessage = constant.ErrorMessage.Invalid_User_Name_Or_Password;
       } else {
         errorCode = constant.ErrorCode.ApplicationError;
         errorMessage = constant.ErrorMessage.ApplicationError;
@@ -113,11 +104,18 @@ module.exports.registerAndSaveUserDB = async (functionContext, resolvedResult) =
     }
   };
 
+
+/**
+ * Database call to fetch user login details for authentication
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 module.exports.fetchUserLoginDetailsDB = async (
 functionContext,
 resolvedResult
 ) => {
-var logger = functionContext.logger;
+const logger = functionContext.logger;
 logger.logInfo("fetchUserLoginDetailsDB() Invoked!");
 try {
     let rows = await databaseModule.knex.raw(
@@ -128,7 +126,7 @@ try {
         rows[0][0]
     )}`
     );
-    var result = rows[0][0][0] ? rows[0][0][0] : null;
+    let result = rows[0][0][0] ? rows[0][0][0] : null;
     return result;
 } catch (errfetchUserLoginDetailsDB) {
     logger.logInfo(
@@ -136,28 +134,14 @@ try {
         errfetchUserLoginDetailsDB
     )}`
     );
-    var errorCode = null;
-    var errorMessage = null;
+    let errorCode = null;
+    let errorMessage = null;
     if (
     errfetchUserLoginDetailsDB.sqlState &&
     errfetchUserLoginDetailsDB.sqlState == constant.ErrorCode.Invalid_User
     ) {
     errorCode = constant.ErrorCode.Invalid_User;
     errorMessage = constant.ErrorMessage.Invalid_User;
-    } else if (
-    errfetchUserLoginDetailsDB.sqlState &&
-    errfetchUserLoginDetailsDB.sqlState ==
-    constant.ErrorCode.Invalid_User_Name_Or_Password
-    ) {
-    errorCode = constant.ErrorCode.Invalid_User_Name_Or_Password;
-    errorMessage = constant.ErrorMessage.Invalid_User_Name_Or_Password;
-    } else if (
-    errfetchUserLoginDetailsDB.sqlState &&
-    errfetchUserLoginDetailsDB.sqlState ==
-    constant.ErrorCode.UserName_Unavailable
-    ) {
-    errorCode = constant.ErrorCode.UserName_Unavailable;
-    errorMessage = constant.ErrorMessage.UserName_Unavailable;
     } else {
     errorCode = constant.ErrorCode.ApplicationError;
     errorMessage = constant.ErrorMessage.ApplicationError;
@@ -170,8 +154,14 @@ try {
 }
 };
 
+/**
+ * Database call for user log in
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 module.exports.userLoginDB = async (functionContext, resolvedResult) => {
-    var logger = functionContext.logger;
+    const logger = functionContext.logger;
     logger.logInfo("userLoginDB() Invoked!");
     try {
       let rows = await databaseModule.knex.raw(
@@ -180,27 +170,20 @@ module.exports.userLoginDB = async (functionContext, resolvedResult) => {
       logger.logInfo(
         `userLoginDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`
       );
-      var result = rows[0][0][0] ? rows[0][0][0] : null;
+      let result = rows[0][0][0] ? rows[0][0][0] : null;
       return result;
     } catch (erruserLoginDB) {
       logger.logInfo(
         `userLoginDB() :: Error :: ${JSON.stringify(erruserLoginDB)}`
       );
-      var errorCode = null;
-      var errorMessage = null;
+      let errorCode = null;
+      let errorMessage = null;
       if (
         erruserLoginDB.sqlState &&
         erruserLoginDB.sqlState == constant.ErrorCode.Invalid_User
       ) {
         errorCode = constant.ErrorCode.Invalid_User;
         errorMessage = constant.ErrorMessage.Invalid_User;
-      } else if (
-        erruserLoginDB.sqlState &&
-        erruserLoginDB.sqlState ==
-        constant.ErrorCode.Invalid_User_Name_Or_Password
-      ) {
-        errorCode = constant.ErrorCode.Invalid_User_Name_Or_Password;
-        errorMessage = constant.ErrorMessage.Invalid_User_Name_Or_Password;
       } else {
         errorCode = constant.ErrorCode.ApplicationError;
         errorMessage = constant.ErrorMessage.ApplicationError;
@@ -213,10 +196,15 @@ module.exports.userLoginDB = async (functionContext, resolvedResult) => {
     }
   };
 
+/**
+ * Database call to get the list of all contests
+ * @param {*} functionContext 
+ * @returns 
+ */
 module.exports.getContestList = async (
 functionContext
 ) => {
-var logger = functionContext.logger;
+const logger = functionContext.logger;
 
 logger.logInfo("getContestList() Invoked!");
 try {
@@ -243,8 +231,15 @@ try {
 }
 };
 
+
+/**
+ * Database call to create and update contests 
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 module.exports.saveContestDB = async (functionContext, resolvedResult) => {
-    var logger = functionContext.logger;
+    const logger = functionContext.logger;
     logger.logInfo("saveContestDB() Invoked!");
     try {
         const contestJson = JSON.stringify({
@@ -271,14 +266,14 @@ module.exports.saveContestDB = async (functionContext, resolvedResult) => {
         logger.logInfo(
             `saveContestDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`
         );
-        var result = rows[0][0][0] ? rows[0][0][0] : null;
+        let result = rows[0][0][0] ? rows[0][0][0] : null;
         return result;
     } catch (errSaveContestDB) {
         logger.logInfo(
             `saveContestDB() :: Error :: ${JSON.stringify(errSaveContestDB)}`
         );
-        var errorCode = null;
-        var errorMessage = null;
+        let errorCode = null;
+        let errorMessage = null;
 
         if (errSaveContestDB.sqlState) {
             switch (errSaveContestDB.sqlState) {
@@ -336,6 +331,13 @@ module.exports.saveContestDB = async (functionContext, resolvedResult) => {
     }
 };
 
+
+/**
+ * Database call to get the details of the contest with contest Reference
+ * @param {*} functionContext 
+ * @param {*} contestRef 
+ * @returns 
+ */
 module.exports.getContestDetailsDB = async (functionContext, contestRef) => {
     let logger = functionContext.logger;
     logger.logInfo("getContestDetailsDB() Invoked!");
@@ -374,6 +376,287 @@ module.exports.getContestDetailsDB = async (functionContext, contestRef) => {
         if (errGetContestDetailsDB.sqlState === '10005') {
             errorCode = constant.ErrorCode.Invalid_Contest_Reference;
             errorMessage = constant.ErrorMessage.Invalid_Contest_Reference;
+        } else {
+            errorCode = constant.ErrorCode.ApplicationError;
+            errorMessage = constant.ErrorMessage.ApplicationError;
+        }
+
+        functionContext.error = new coreRequestModel.ErrorModel(
+            errorMessage,
+            errorCode
+        );
+        throw functionContext.error;
+    }
+};
+
+
+/**
+ * Database call for the user to join a contest
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
+module.exports.joinContestDB = async (functionContext, resolvedResult) => {
+    const logger = functionContext.logger;
+    logger.logInfo("joinContestDB() Invoked!");
+    try {
+        let rows = await databaseModule.knex.raw(
+            "CALL usp_join_contest(:contestRef, :userRef, :currentTs)",
+            {
+                contestRef: resolvedResult.contestRef,
+                userRef: functionContext.userRef,
+                currentTs: functionContext.currentTs
+            }
+        );
+
+        logger.logInfo(`joinContestDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`);
+        return rows[0][0][0] || null;
+    } catch (errJoinContestDB) {
+        logger.logInfo(`joinContestDB() :: Error :: ${JSON.stringify(errJoinContestDB)}`);
+        let errorCode = null;
+        let errorMessage = null;
+
+        switch (errJoinContestDB.sqlState) {
+            case '10005':
+                errorCode = constant.ErrorCode.Invalid_Contest_Reference;
+                errorMessage = constant.ErrorMessage.Invalid_Contest_Reference;
+                break;
+            case '10006':
+                errorCode = constant.ErrorCode.Invalid_User;
+                errorMessage = constant.ErrorMessage.Invalid_User;
+                break;
+            case '10014':
+                errorCode = constant.ErrorCode.Contest_Not_Active;
+                errorMessage = constant.ErrorMessage.Contest_Not_Active;
+                break;
+            case '10015':
+                errorCode = constant.ErrorCode.User_Already_Joined;
+                errorMessage = constant.ErrorMessage.User_Already_Joined;
+                break;
+            case '10018':
+                errorCode = constant.ErrorCode.Contest_Not_Started; // Add to constant
+                errorMessage = constant.ErrorMessage.Contest_Not_Started;
+                break;
+            case '10019':
+                errorCode = constant.ErrorCode.Contest_Ended; // Add to constant
+                errorMessage = constant.ErrorMessage.Contest_Ended;
+                break;
+            case '10020':
+                errorCode = constant.ErrorCode.Vip_Contest_Restricted; // Add to constant
+                errorMessage = constant.ErrorMessageVip_Contest_Restricted;
+                break;
+            default:
+                errorCode = constant.ErrorCode.ApplicationError;
+                errorMessage = constant.ErrorMessage.ApplicationError;
+                break;
+        }
+
+        functionContext.error = new coreRequestModel.ErrorModel(errorMessage, errorCode);
+        throw functionContext.error;
+    }
+};
+
+
+/**
+ * Database call to Submit answers and calculate scores
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
+module.exports.submitContestAnswersDB = async (functionContext, resolvedResult) => {
+    const logger = functionContext.logger;
+    logger.logInfo("submitContestAnswersDB() Invoked!");
+    try {
+        const answersJson = JSON.stringify(resolvedResult.answers);
+        let rows = await databaseModule.knex.raw(
+            "CALL usp_submit_contest_answers(:contestRef, :userRef, :answersJson, :finalSubmission, :currentTs)",
+            {
+                contestRef: resolvedResult.contestRef,
+                userRef: functionContext.userRef,
+                answersJson: answersJson,
+                finalSubmission: resolvedResult.finalSubmission ? 1 : 0,
+                currentTs: functionContext.currentTs
+            }
+        );
+
+        logger.logInfo(`submitContestAnswersDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`);
+        return rows[0][0][0] || null;
+    } catch (errSubmitContestDB) {
+        logger.logInfo(`submitContestAnswersDB() :: Error :: ${JSON.stringify(errSubmitContestDB)}`);
+        let errorCode = null;
+        let errorMessage = null;
+
+        switch (errSubmitContestDB.sqlState) {
+            case '10005':
+                errorCode = constant.ErrorCode.Invalid_Contest_Reference;
+                errorMessage = constant.ErrorMessage.Invalid_Contest_Reference;
+                break;
+            case '10006':
+                errorCode = constant.ErrorCode.Invalid_User;
+                errorMessage = constant.ErrorMessage.Invalid_User;
+                break;
+            case '10016':
+                errorCode = constant.ErrorCode.User_Not_Joined;
+                errorMessage = constant.ErrorMessage.User_Not_Joined;
+                break;
+            case '10018':
+                errorCode = constant.ErrorCode.Contest_Not_Started;
+                errorMessage = constant.ErrorMessage.Contest_Not_Started;
+                break;
+            case '10019':
+                errorCode = constant.ErrorCode.Contest_Ended;
+                errorMessage = constant.ErrorMessage.Contest_Ended;
+                break;
+            case '10021':
+                errorCode = constant.ErrorCode.Invalid_Question_Id;
+                errorMessage = constant.ErrorMessage.Invalid_Question_Id;
+                break;
+            case '10022':
+                errorCode = constant.ErrorCode.Invalid_Option_Id;
+                errorMessage = constant.ErrorMessage.Invalid_Option_Id;
+                break;
+            case '10023':
+                errorCode = constant.ErrorCode.Contest_Finalized;
+                errorMessage = constant.ErrorMessage.Contest_Finalized;
+                break;
+            case '10024':
+                errorCode = constant.ErrorCode.Answer_Already_Submitted;
+                errorMessage = constant.ErrorMessage.Answer_Already_Submitted;
+                break;
+            default:
+                errorCode = constant.ErrorCode.ApplicationError;
+                errorMessage = constant.ErrorMessage.ApplicationError;
+                break;
+        }
+
+        functionContext.error = new coreRequestModel.ErrorModel(errorMessage, errorCode);
+        throw functionContext.error;
+    }
+};
+
+
+/**
+ * Database call to get the leaderboard of a contest
+ * @param {*} functionContext 
+ * @param {*} contestRef 
+ * @returns 
+ */
+module.exports.getContestLeaderboardDB = async (functionContext, contestRef) => {
+    const logger = functionContext.logger;
+    logger.logInfo("getContestLeaderboardDB() Invoked!");
+    try {
+        let rows = await databaseModule.knex.raw(
+            "CALL usp_get_contest_leaderboard(:contestRef)",
+            {
+                contestRef: contestRef
+            }
+        );
+
+        logger.logInfo(
+            `getContestLeaderboardDB() :: Returned Result :: ${JSON.stringify(rows[0][0])}`
+        );
+
+        const leaderboardData = rows[0][0] || [];
+
+        return leaderboardData.length ? leaderboardData.map(entry => ({
+            rank: entry.rank,
+            userId: entry.userId,
+            userRef: entry.userRef,
+            userName: entry.userName,
+            score: entry.score,
+            updatedAt: entry.updatedAt
+        })):leaderboardData ;
+    } catch (errGetLeaderboardDB) {
+        logger.logInfo(
+            `getContestLeaderboardDB() :: Error :: ${JSON.stringify(errGetLeaderboardDB)}`
+        );
+        let errorCode = null;
+        let errorMessage = null;
+
+        if (errGetLeaderboardDB.sqlState === '10005') {
+            errorCode = constant.ErrorCode.Invalid_Contest_Reference;
+            errorMessage = constant.ErrorMessage.Invalid_Contest_Reference;
+        } else {
+            errorCode = constant.ErrorCode.ApplicationError;
+            errorMessage = constant.ErrorMessage.ApplicationError;
+        }
+
+        functionContext.error = new coreRequestModel.ErrorModel(
+            errorMessage,
+            errorCode
+        );
+        throw functionContext.error;
+    }
+};
+
+/**
+ * Database call to get all the user details to be displayed on the dashboard
+ * @param {*} functionContext 
+ * @returns 
+ */
+module.exports.getUserDetailsDB = async (functionContext) => {
+    const logger = functionContext.logger;
+    logger.logInfo("getUserDetailsDB() Invoked!");
+    try {
+        let rows = await databaseModule.knex.raw(
+            "CALL usp_get_user_details(:userRef)",
+            { userRef: functionContext.userRef }
+        );
+
+        logger.logInfo(
+            `getUserDetailsDB() :: Returned Result :: ${JSON.stringify(rows[0])}`
+        );
+
+        const userDetails = rows[0][0][0] || null;
+        const userContests = rows[0][1] || [];
+        const userHistory = rows[0][2] || [];
+
+        return {
+            user: {
+                userId: userDetails.userId,
+                userRef: userDetails.userRef,
+                name: userDetails.name,
+                email: userDetails.email,
+                role: userDetails.role,
+                isActive: userDetails.isActive,
+                createdAt: userDetails.createdAt,
+                updatedAt: userDetails.updatedAt
+            },
+            contests: userContests.map(c => ({
+                contestId: c.contestId,
+                contestRef: c.contestRef,
+                contestName: c.contestName,
+                contestType: c.contestType,
+                startTime: c.startTime,
+                endTime: c.endTime,
+                joinedAt: c.joinedAt,
+                completedAt: c.completedAt,
+                score: c.score,
+                rank: c.rank
+            })),
+            history: userHistory.map(h => ({
+                contestId: h.contestId,
+                contestRef: h.contestRef,
+                questionId: h.questionId,
+                questionRef: h.questionRef,
+                questionText: h.questionText,
+                questionType: h.questionType,
+                optionId: h.optionId,
+                optionText: h.optionText,
+                isCorrect: h.isCorrect,
+                submittedAt: h.submittedAt
+            }))
+        };
+    } catch (errGetUserDetailsDB) {
+        logger.logInfo(
+            `getUserDetailsDB() :: Error :: ${JSON.stringify(errGetUserDetailsDB)}`
+        );
+        let errorCode = null;
+        let errorMessage = null;
+
+        if (errGetUserDetailsDB.sqlState === '10006') {
+            errorCode = constant.ErrorCode.Invalid_User;
+            errorMessage = constant.ErrorMessage.Invalid_User;
         } else {
             errorCode = constant.ErrorCode.ApplicationError;
             errorMessage = constant.ErrorMessage.ApplicationError;

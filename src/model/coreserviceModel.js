@@ -1,8 +1,4 @@
-var momentTimezone = require("moment-timezone");
-var appLib = require("applib");
-const { v4: uuid } = require('uuid');
-var constant = require("../common/constant");
-
+const momentTimezone = require("moment-timezone");
 
 class functionContext {
   constructor(requestType, error, res, logger) {
@@ -162,6 +158,83 @@ class getContestResponse {
     }
 }
 
+class joinContestRequest {
+    constructor(req) {
+        this.contestRef = req.query.contestRef || null;
+    }
+}
+
+class joinContestResponse {
+    constructor() {
+        this.Error = null;
+        this.Details = {
+            ContestRef: null,
+            Name: null,
+            ContestType: null,
+            StartTime: null,
+            EndTime: null
+        };
+        this.RequestID = null;
+    }
+}
+
+class submitContestRequest {
+    constructor(req) {
+        this.contestRef = req.query.contestRef || null;
+        this.answers = req.body.Answers || [];
+        this.finalSubmission = req.body.FinalSubmission !== undefined ? req.body.FinalSubmission : false;
+    }
+}
+
+class submitContestResponse {
+    constructor() {
+        this.Error = null;
+        this.Details = {
+            ContestRef: null,
+            Name: null,
+            TotalQuestions: null,
+            SubmittedAnswers: null,
+            IsCompleted: null,
+            Score: null
+        };
+        this.RequestID = null;
+    }
+}
+
+class getLeaderboardRequest {
+    constructor(req) {
+        this.contestRef = req.query.contestRef ? req.query.contestRef : null;
+    }
+}
+
+class getLeaderboardResponse {
+    constructor() {
+        this.Error = null;
+        this.Details = {
+            ContestRef: null,
+            Leaderboard: []
+        };
+        this.RequestID = null;
+    }
+}
+
+class getUserDetailsRequest {
+    constructor(req) {
+        this.userRef = req.query.userRef || null; 
+    }
+}
+
+class getUserDetailsResponse {
+    constructor() {
+        this.Error = null;
+        this.Details = {
+            User: {},
+            Contests: [],
+            History: []
+        };
+        this.RequestID = null;
+    }
+}
 
 
 
@@ -179,3 +252,11 @@ module.exports.SaveContestRequest = saveContestRequest;
 module.exports.SaveContestResponse = saveContestResponse;
 module.exports.GetContestRequest = getContestRequest;
 module.exports.GetContestResponse = getContestResponse;
+module.exports.JoinContestRequest = joinContestRequest;
+module.exports.JoinContestResponse = joinContestResponse;
+module.exports.SubmitContestRequest = submitContestRequest;
+module.exports.SubmitContestResponse = submitContestResponse;
+module.exports.GetLeaderboardRequest = getLeaderboardRequest;
+module.exports.GetLeaderboardResponse = getLeaderboardResponse;
+module.exports.GetUserDetailsRequest = getUserDetailsRequest;
+module.exports.GetUserDetailsResponse = getUserDetailsResponse;

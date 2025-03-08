@@ -2,10 +2,22 @@ module.exports.ErrorCode = {
     ApplicationError: 500,
     Invalid_Request: 501,
     Success: 200,
+    Invalid_Request_Url: 10001,
+    Invalid_User_Credentials: 10002,
     Invalid_Contest_Reference: 10005,
     Invalid_User: 10006,
     Unauthorized_Access: 10007,
     Invalid_Question_Options: 10008, 
+    Contest_Not_Active: 10014,
+    User_Already_Joined: 10015,
+    Contest_Not_Started: 10018,
+    Contest_Ended: 10019,
+    Vip_Contest_Restricted: 10020,
+    User_Not_Joined: 10016,
+    Invalid_Question_Id: 10021,
+    Invalid_Option_Id: 10022,
+    Contest_Finalized: 10023,
+    Answer_Already_Submitted: 10024
   };
   
   module.exports.ErrorMessage = {
@@ -14,6 +26,8 @@ module.exports.ErrorCode = {
     Invalid_Login_Credentials: "Invalid username or password",
     Invalid_Contest_Reference: 'Invalid contest reference provided',
     Invalid_User: 'Invalid user reference',
+    Invalid_Request_Url: 'Invalid Request Url',
+    Invalid_User_Credentials: 'Invalid User Credentials',
     Only_Admins_Can_Create_Contests: 'Only admins can create or update contests',
     Minimum_Two_Options_Required: 'All questions must have at least 2 options',
     At_Least_One_Correct_Option_Required: 'Questions must have at least one correct option',
@@ -21,6 +35,16 @@ module.exports.ErrorCode = {
     True_False_Two_Options_Required: 'True/False questions must have exactly 2 options',
     True_False_One_Correct_Option: 'True/False questions must have exactly one correct option',
     True_False_Options_Must_Be_True_False: 'True/False questions must have options "True" and "False"',
+    Contest_Not_Active: 'Contest is not active',
+    User_Already_Joined: 'User already joined this contest',
+    Vip_Contest_Restricted: 'Only VIP or Admin users can join VIP contests',
+    User_Not_Joined: 'User has not joined this contest',
+    Contest_Not_Started: 'Contest has not yet started',
+    Contest_Ended: 'Contest has already ended',
+    Invalid_Question_Id: 'Invalid question ID for this contest',
+    Invalid_Option_Id: 'Invalid option ID for this question',
+    Contest_Finalized: 'Contest submission is already finalized',
+    Answer_Already_Submitted: 'Answer for this question has already been submitted and cannot be updated'
   };
   
   module.exports.RequestType = {
@@ -31,4 +55,8 @@ module.exports.ErrorCode = {
     GETCONTESTLIST: "GCL",
     SAVECONTESTDETAILS: "SCD",
     GETCONTESTDETAILS: "GCD",
+    JOINCONTEST: "JC",
+    SUBMITCONTEST: "SC",
+    GETLEADERBOARD: "GL",
+    GETUSERDETAILS: "GUD",
   };

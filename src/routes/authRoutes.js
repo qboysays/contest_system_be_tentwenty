@@ -1,7 +1,7 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
-var authAPI = require("../api/authenticationAPI");
+const authAPI = require("../api/authenticationAPI");
 
 router.post("/register", authAPI.RegisterUser);
 router.post("/login", authAPI.UserLogin);

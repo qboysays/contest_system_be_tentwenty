@@ -7,25 +7,25 @@ const bcrypt = require("bcryptjs");
 const constant = require("../common/constant");
 const requestType = constant.RequestType;
 
-module.exports.RegisterUser = async (req, res) => {
-    var logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+ module.exports.RegisterUser = async (req, res) => {
+    const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
   
     logger.logInfo(`RegisterUser invoked()!!`);
   
-    var functionContext = new coreRequestModel.FunctionContext(
+    const functionContext = new coreRequestModel.FunctionContext(
       requestType.REGISTERUSER,
       null,
       res,
       logger
     );
   
-    var registerUserRequest = new coreRequestModel.RegisterUserRequest(req);
+    let registerUserRequest = new coreRequestModel.RegisterUserRequest(req);
   
     logger.logInfo(
       `RegisterUser() :: Request Object : ${registerUserRequest}`
     );
   
-    var validateRequest = joiValidationModel.registerUserRequest(
+    let validateRequest = joiValidationModel.registerUserRequest(
       registerUserRequest
     );
   
@@ -74,21 +74,21 @@ module.exports.RegisterUser = async (req, res) => {
   
 
 module.exports.UserLogin = async (req, res) => {
-  var logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+  const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
 
   logger.logInfo(`UserLogin invoked()!!`);
 
-  var functionContext = new coreRequestModel.FunctionContext(
+  const functionContext = new coreRequestModel.FunctionContext(
     requestType.USERLOGIN,
     null,
     res,
     logger
   );
 
-  var UserLoginRequest = new coreRequestModel.UserLoginRequest(req);
+  let UserLoginRequest = new coreRequestModel.UserLoginRequest(req);
   logger.logInfo(`UserLogin() :: Request Object : ${UserLoginRequest}`);
 
-  var validateRequest = joiValidationModel.userLoginRequest(UserLoginRequest);
+  let validateRequest = joiValidationModel.userLoginRequest(UserLoginRequest);
 
   if (validateRequest.error) {
     functionContext.error = new coreRequestModel.ErrorModel(
@@ -105,7 +105,7 @@ module.exports.UserLogin = async (req, res) => {
     return;
   }
 
-  var requestContext = {
+  let requestContext = {
     ...UserLoginRequest,
     passwordHash: null,
   };
@@ -123,7 +123,7 @@ module.exports.UserLogin = async (req, res) => {
     );
 
 
-    var UserLoginDBResult = await databaseHelper.userLoginDB(
+    let UserLoginDBResult = await databaseHelper.userLoginDB(
       functionContext,
       requestContext
     );
@@ -143,8 +143,14 @@ module.exports.UserLogin = async (req, res) => {
 };
 
 
+/**
+ * This function encrypts the user password
+ * @param {*} functionContext 
+ * @param {*} requestContext 
+ * @returns 
+ */
 const encryptPassword = async (functionContext, requestContext) => {
-  var logger = functionContext.logger;
+  const logger = functionContext.logger;
 
   logger.logInfo(`encryptPassword() Invoked!`);
 
@@ -157,6 +163,11 @@ const encryptPassword = async (functionContext, requestContext) => {
   return;
 };
 
+/**
+ * This function maps and sends the response of register user endpoint 
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
 const registerUserResponse = (functionContext, resolvedResult) => {
   let logger = functionContext.logger;
 
@@ -183,6 +194,13 @@ const registerUserResponse = (functionContext, resolvedResult) => {
   logger.logInfo(`registerUserResponse completed`);
 };
 
+/**
+ * This function decrypts and authenticates the password
+ * @param {*} functionContext 
+ * @param {*} requestContext 
+ * @param {*} resolvedResult 
+ * @returns 
+ */
 const passwordAuthentication = async (
     functionContext,
     requestContext,
@@ -197,8 +215,6 @@ const passwordAuthentication = async (
           `${requestContext.password}`,
           resolvedResult.passwordHash
         );
-        
-        
         
           if (result) {
             logger.logInfo(`passwordAuthentication() :: Authentication Successful`);
@@ -220,6 +236,11 @@ const passwordAuthentication = async (
     }
   };
 
+/**
+ * This function maps and sends the response of user login endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
 const saveUserLoginResponse = (functionContext, resolvedResult) => {
 let logger = functionContext.logger;
 

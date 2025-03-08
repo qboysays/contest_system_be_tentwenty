@@ -7,12 +7,12 @@ const constant = require("../common/constant");
 const requestType = constant.RequestType;
 
 module.exports.GetContestList = async (req, res) => {
-    var logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+    const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
   
     logger.logInfo(`GetContestList invoked()!!`);
   
   
-    var functionContext = new coreRequestModel.FunctionContext(
+    const functionContext = new coreRequestModel.FunctionContext(
       requestType.GETCONTESTLIST,
       null,
       res,
@@ -21,7 +21,7 @@ module.exports.GetContestList = async (req, res) => {
   
     
     try {
-      var getContestListFromDBResult = await databaseHelper.getContestList(
+      const getContestListFromDBResult = await databaseHelper.getContestList(
         functionContext  
       );
   
@@ -98,14 +98,14 @@ try {
 };
 
 module.exports.GetContestDetails = async (req, res) => {
-    var logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+    const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
   
     logger.logInfo(`GetContestDetails invoked()!!`);
   
     let getContestRequest = new coreRequestModel.GetContestRequest(req);
 
      
-    var functionContext = new coreRequestModel.FunctionContext(
+    const functionContext = new coreRequestModel.FunctionContext(
         requestType.GETCONTESTDETAILS,
         null,
         res,
@@ -130,7 +130,7 @@ module.exports.GetContestDetails = async (req, res) => {
  
   
     try {
-      var getContactDetailsDBResult = await databaseHelper.getContestDetailsDB(
+      const getContactDetailsDBResult = await databaseHelper.getContestDetailsDB(
         functionContext,
         getContestRequest.reference
       );
@@ -150,6 +150,167 @@ module.exports.GetContestDetails = async (req, res) => {
     }
   };
 
+module.exports.JoinContest = async (req, res) => {
+const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+
+logger.logInfo(`JoinContest invoked()!!`);
+
+let joinContestRequest = new coreRequestModel.JoinContestRequest(req);
+
+    
+const functionContext = new coreRequestModel.FunctionContext(
+    requestType.JOINCONTEST,
+    null,
+    res,
+    logger
+    );  
+
+let validateRequest = joiValidationModel.joinContestRequest(joinContestRequest);
+
+if (validateRequest.error) {
+functionContext.error = new coreRequestModel.ErrorModel(
+    constant.ErrorMessage.Invalid_Request,
+    constant.ErrorCode.Invalid_Request,
+    validateRequest.error.details
+);
+logger.logInfo(
+    `JoinContest() Error:: Invalid Request :: ${JSON.stringify(validateRequest)}`
+);
+joinContestResponse(functionContext, null);
+return;
+}
+
+try {
+    const joinContestDBResult = await databaseHelper.joinContestDB(
+    functionContext,
+    joinContestRequest
+    );
+
+    joinContestResponse(functionContext, joinContestDBResult);
+} catch (errJoinContest) {
+    functionContext.error = new coreRequestModel.ErrorModel(
+    errJoinContest.ErrorMessage,
+    errJoinContest.ErrorCode
+    );
+    logger.logInfo(
+    `errJoinContest() :: Error :: ${JSON.stringify(
+        errJoinContest
+    )}`
+    );
+    joinContestResponse(functionContext, null);
+}
+};
+
+module.exports.SubmitContest = async (req, res) => {
+    const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+    
+    logger.logInfo(`SubmitContest invoked()!!`);
+    
+    let submitContestRequest = new coreRequestModel.SubmitContestRequest(req);
+    
+        
+    const functionContext = new coreRequestModel.FunctionContext(
+        requestType.SUBMITCONTEST,
+        null,
+        res,
+        logger
+        );  
+    
+    let validateRequest = joiValidationModel.submitContestRequest(submitContestRequest);
+    
+    if (validateRequest.error) {
+    functionContext.error = new coreRequestModel.ErrorModel(
+        constant.ErrorMessage.Invalid_Request,
+        constant.ErrorCode.Invalid_Request,
+        validateRequest.error.details
+    );
+    logger.logInfo(
+        `SubmitContest() Error:: Invalid Request :: ${JSON.stringify(validateRequest)}`
+    );
+    submitContestResponse(functionContext, null);
+    return;
+    }
+    
+    try {
+        const submitContestDBResult = await databaseHelper.submitContestAnswersDB(
+        functionContext,
+        submitContestRequest
+        );
+    
+        submitContestResponse(functionContext, submitContestDBResult);
+    } catch (errSubmitContest) {
+        functionContext.error = new coreRequestModel.ErrorModel(
+        errSubmitContest.ErrorMessage,
+        errSubmitContest.ErrorCode
+        );
+        logger.logInfo(
+        `errSubmitContest() :: Error :: ${JSON.stringify(
+            errSubmitContest
+        )}`
+        );
+        submitContestResponse(functionContext, null);
+    }
+    };
+
+module.exports.GetLeaderboard = async (req, res) => {
+const logger = new appLib.Logger(req.originalUrl, res.apiContext.requestID);
+
+logger.logInfo(`GetLeaderboard invoked()!!`);
+
+
+const functionContext = new coreRequestModel.FunctionContext(
+    requestType.GETLEADERBOARD,
+    null,
+    res,
+    logger
+);
+
+let getLeaderboardRequest = new coreRequestModel.GetLeaderboardRequest(req);
+
+
+let validateRequest = joiValidationModel.getLeaderboardRequest(getLeaderboardRequest);
+
+if (validateRequest.error) {
+functionContext.error = new coreRequestModel.ErrorModel(
+    constant.ErrorMessage.Invalid_Request,
+    constant.ErrorCode.Invalid_Request,
+    validateRequest.error.details
+);
+logger.logInfo(
+    `GetLeaderboard() Error:: Invalid Request :: ${JSON.stringify(validateRequest)}`
+);
+getContestLeaderboardResponse(functionContext, null);
+return;
+}
+
+
+try {
+    let getContestLeaderboardDBResult = await databaseHelper.getContestLeaderboardDB(
+    functionContext,
+    getLeaderboardRequest.contestRef
+    );
+
+    getContestLeaderboardResponse(functionContext, getContestLeaderboardDBResult);
+} catch (errGetLeaderboard) {
+    functionContext.error = new coreRequestModel.ErrorModel(
+    errGetLeaderboard.ErrorMessage,
+    errGetLeaderboard.ErrorCode
+    );
+    logger.logInfo(
+    `GetLeaderboard() :: Error :: ${JSON.stringify(
+        errGetLeaderboard
+    )
+    }`
+    );
+    getContestLeaderboardResponse(functionContext, null);
+}
+};
+
+/**
+ * This function maps and sends the response of get Contest list endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
 const getContestListResponse = (functionContext, resolvedResult) => {
 let logger = functionContext.logger;
 
@@ -173,6 +334,11 @@ logger.logInfo(
 logger.logInfo(`getContestListResponse completed`);
 };
 
+/**
+ * This function maps and sends the response of Save contest endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
 const saveContestResponse = (functionContext, resolvedResult) => {
 let logger = functionContext.logger;
 
@@ -201,6 +367,11 @@ logger.logInfo(
 logger.logInfo(`saveContestResponse completed`);
 };
 
+/**
+ * This function maps and sends the response of Get contest endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
 const getContestResponse = (functionContext, resolvedResult) => {
 let logger = functionContext.logger;
 
@@ -232,4 +403,97 @@ logger.logInfo(
     `getContestResponse  Response :: ${JSON.stringify(getContestResponse)}`
 );
 logger.logInfo(`getContestResponse completed`);
+};
+
+/**
+ * This function maps and sends the response of Join Contest endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
+const joinContestResponse = (functionContext, resolvedResult) => {
+    let logger = functionContext.logger;
+    
+    logger.logInfo(`joinContestResponse Invoked()`);
+    
+    let joinContestResponse = new coreRequestModel.JoinContestResponse();
+    
+    joinContestResponse.RequestID = functionContext.requestID;
+    
+    if (functionContext.error) {
+        joinContestResponse.Error = functionContext.error;
+        joinContestResponse.Details = null;
+    } else {
+        joinContestResponse.Error = null;
+        joinContestResponse.Details.ContestRef = resolvedResult.reference,
+        joinContestResponse.Details.Name = resolvedResult.name,
+        joinContestResponse.Details.ContestType = resolvedResult.contestType,
+        joinContestResponse.Details.StartTime = resolvedResult.startTime,
+        joinContestResponse.Details.EndTime = resolvedResult.endTime
+    }
+    appLib.SendHttpResponse(functionContext, joinContestResponse);
+    logger.logInfo(
+        `joinContestResponse  Response :: ${JSON.stringify(joinContestResponse)}`
+    );
+    logger.logInfo(`joinContestResponse completed`);
+    };
+
+/**
+ * This function maps and sends the response of Submit Contest endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
+const submitContestResponse = (functionContext, resolvedResult) => {
+    let logger = functionContext.logger;
+    
+    logger.logInfo(`submitContestResponse Invoked()`);
+    
+    let submitContestResponse = new coreRequestModel.SubmitContestResponse();
+    
+    submitContestResponse.RequestID = functionContext.requestID;
+    
+    if (functionContext.error) {
+        submitContestResponse.Error = functionContext.error;
+        submitContestResponse.Details = null;
+    } else {
+        submitContestResponse.Error = null;
+        submitContestResponse.Details.ContestRef = resolvedResult.reference,
+        submitContestResponse.Details.Name = resolvedResult.name,
+        submitContestResponse.Details.SubmittedAnswers = resolvedResult.submittedAnswers,
+        submitContestResponse.Details.TotalQuestions = resolvedResult.totalQuestions,
+        submitContestResponse.Details.IsCompleted = resolvedResult.isCompleted
+        submitContestResponse.Details.Score = resolvedResult.score
+    }
+    appLib.SendHttpResponse(functionContext, submitContestResponse);
+    logger.logInfo(
+        `submitContestResponse  Response :: ${JSON.stringify(submitContestResponse)}`
+    );
+    logger.logInfo(`submitContestResponse completed`);
+    };
+
+/**
+ * This function maps and sends the response of Get Leaderboard endpoint
+ * @param {*} functionContext 
+ * @param {*} resolvedResult 
+ */
+const getContestLeaderboardResponse = (functionContext, resolvedResult) => {
+    let logger = functionContext.logger;
+    
+    logger.logInfo(`getContestListResponse Invoked()`);
+    
+    let getContestListResponse = new coreRequestModel.GetLeaderboardResponse();
+    
+    getContestListResponse.RequestID = functionContext.requestID;
+    
+    if (functionContext.error) {
+        getContestListResponse.Error = functionContext.error;
+        getContestListResponse.Details = null;
+    } else {
+        getContestListResponse.Error = null;
+        getContestListResponse.Details = resolvedResult;
+    }
+    appLib.SendHttpResponse(functionContext, getContestListResponse);
+    logger.logInfo(
+        `getContestListResponse  Response :: ${JSON.stringify(getContestListResponse)}`
+    );
+    logger.logInfo(`getContestListResponse completed`);
 };
